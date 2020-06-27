@@ -1,8 +1,10 @@
 #pragma once
 
+#include <vector>
+
 namespace asatar
 {
-    typedef int Var
+    typedef int Var;
 
     struct Lit
     {
@@ -24,19 +26,6 @@ namespace asatar
     };
 
     inline Lit operator ~(Lit p) { Lit q; q.x = p.x ^ 1; return q; }
-
-    struct Clause
-    {
-        Clause(const vector<Lit>& lits) : literals(lits)
-        {
-            watcher[0] = literals.empty() ? -1 : 0;
-            watcher[1] = (literals.size() < 2) ? -1 : 1;
-        }
-
-        inline bool empty() { return watcher[0] == -1; }
-        inline bool unit()  { return !empty() && watcher[1] == -1; }
-
-        std::vector<Lit> literals;
-        int watcher[2];
-    };
+    
+    typedef std::vector<Lit> Clause;
 };
