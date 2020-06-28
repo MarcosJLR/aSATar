@@ -5,19 +5,6 @@
 #include <tuple>
 using namespace std;
 
-int power(int base, int exp){
-	if(exp==0) return 1;
-	else if(exp==1) return base;
-	else if(exp & 1){
-		int hpower = power(base,exp/2);
-		return base*hpower*hpower;
-	}
-	else{
-		int hpower = power(base,exp/2);
-		return hpower*hpower;	
-	}
-}
-
 string baseSudoku (int order,int length, int size, int nVars) {
 	string sat = "";
 	string completeness = "";
@@ -121,15 +108,9 @@ void sudokuToSAT (string sudoku) {
 	else cout << "Unable to open file.\n";
 }
 
-int main () {
-	string fileName;
-	cin >> fileName;
-	ifstream file(fileName);
-	string sudoku;
-	if(file.is_open()){
-		getline(file,sudoku);
-		sudokuToSAT(sudoku);
-	}
-	else cout << "File not opened.\n";
+int main (int argc, char *argv[]) {
+	string sudoku = argv[1];
+	sudoku.append(argv[2]);
+	sudokuToSAT(sudoku);
 	return 0;
 }
