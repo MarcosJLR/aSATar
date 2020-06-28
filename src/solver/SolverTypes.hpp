@@ -1,8 +1,10 @@
 #pragma once
 
+#include <vector>
+
 namespace asatar
 {
-    typedef int Var
+    typedef int Var;
 
     struct Lit
     {
@@ -17,26 +19,16 @@ namespace asatar
         bool operator == (Lit p) const { return x == p.x; }
         bool operator != (Lit p) const { return x != p.x; }
         bool operator <  (Lit p) const { return x < p.x; }
-
-        inline Var var()            { return x >> 1; }
-        inline bool sign()          { return x & 1; }
+    
         inline bool eval(bool b)    { return (x & 1) ^ (int)b; }
     };
 
-    inline Lit operator ~(Lit p) { Lit q; q.x = p.x ^ 1; return q; }
+    inline Lit operator ~(Lit p)    { Lit q; q.x = p.x ^ 1; return q; }
+    inline Var var(Lit p)           { return p.x >> 1; }
+    inline bool sign(Lit p)         { return p.x & 1; }
+    inline int toInt(Lit p)         { return p.x; }
 
-    struct Clause
-    {
-        Clause(const vector<Lit>& lits) : literals(lits)
-        {
-            watcher[0] = literals.empty() ? -1 : 0;
-            watcher[1] = (literals.size() < 2) ? -1 : 1;
-        }
-
-        inline bool empty() { return watcher[0] == -1; }
-        inline bool unit()  { return !empty() && watcher[1] == -1; }
-
-        std::vector<Lit> literals;
-        int watcher[2];
-    };
+    inline Lit mkLit(Var var, bool sign = false) { Lit q(var, sign); return q; }
+    
+    typedef std::vector<Lit> Clause;
 };
