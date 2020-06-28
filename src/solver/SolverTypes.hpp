@@ -19,13 +19,16 @@ namespace asatar
         bool operator == (Lit p) const { return x == p.x; }
         bool operator != (Lit p) const { return x != p.x; }
         bool operator <  (Lit p) const { return x < p.x; }
-
-        inline Var var()            { return x >> 1; }
-        inline bool sign()          { return x & 1; }
+    
         inline bool eval(bool b)    { return (x & 1) ^ (int)b; }
     };
 
-    inline Lit operator ~(Lit p) { Lit q; q.x = p.x ^ 1; return q; }
+    inline Lit operator ~(Lit p)    { Lit q; q.x = p.x ^ 1; return q; }
+    inline Var var(Lit p)           { return p.x >> 1; }
+    inline bool sign(Lit p)         { return p.x & 1; }
+    inline int toInt(Lit p)         { return p.x; }
+
+    inline Lit mklit(Var var, bool sign = false) { Lit q(var, sign); reutrn q; }
     
     typedef std::vector<Lit> Clause;
 };

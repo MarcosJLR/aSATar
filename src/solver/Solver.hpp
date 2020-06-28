@@ -1,5 +1,6 @@
 #pragma once
 
+#include <assert.h>
 #include <vector>
 #include <list>
 
@@ -22,6 +23,7 @@ namespace asatar
             memset(assign, -1, sizeof(assgin));
         }
 
+        inline bool isSAT()                 { return changeStack.size() == N; }                 // Is the formula currently satisfied
         inline int value(Lit p)             { return assign[var(p)] == -1 ? -1 : (int)p.eval(assign[var(p)]); } 
         inline bool isTrue(Lit p)           { return value(p) == 1; }                           // Does this literal evaluates to True
         inline bool isFalse(Lit p)          { return value(p) == 0; }                           // Does this literal evaluates to False
@@ -31,8 +33,12 @@ namespace asatar
                                               (clause.size() == 1 || isFalse(clause[1])); }
 
         bool unitPropagation();                 // Propagate unit clauses
-        void setVariable(Var var, bool value);  // Assign value to variable and handle watchlists
-        void backTrack();                       // Undo all assignments made in the last decision level
+        void setVariable(Lit p);                // Assign value to variable to make p true and handle watchlists
+        bool updateWatcher(int i, Lit p);       // Update watcher of clause after value of p changes
+        void makeDecision(Var x);               // Make a decision for variable x                
+        bool backTrack();                       // Undo all assignments made in the last decision level
+
+        bool solve()                            // Solve this instance of SAT
 
     private:
         uint N;                                 // Number of variables
@@ -44,5 +50,8 @@ namespace asatar
 
         std::stack<Var> changeStack;            // Stack containing all variable assignments
         std::stack<Var> decisionStack;          // Stack containing all decision variables in order
+
+        static const bool UNSAT = false;
+        static const bool SAT   = true;
     };
 };
