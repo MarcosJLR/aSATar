@@ -10,9 +10,9 @@
 
 #include "SolverTypes.hpp"
 
-#define MAX_VAR     1024    
-#define MAX_LIT     2048
-#define MAX_CLAUSE  1024 
+#define MAX_VAR     100000
+#define MAX_LIT     200000
+#define MAX_CLAUSE  200000
 
 namespace asatar
 {
@@ -48,10 +48,10 @@ namespace asatar
         bool solve();                           // Solve this instance of SAT
 
         // IO functions
-        void readFromFile(std::ifstream& file);         // Read from file given filestream
+        void readFromFile(std::istream& file);         // Read from file given filestream
         void readFromFile(const std::string filename);  // Read from file given filename
 
-        void printToFile(std::ofstream& file);          // Print to file given filestream
+        void printToFile(std::ostream& file);          // Print to file given filestream
         void printToFile(const std::string filename);   // Print to file given filename
 
     private:

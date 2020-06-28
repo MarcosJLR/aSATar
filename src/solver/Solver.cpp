@@ -9,7 +9,7 @@ namespace asatar
             int i = unitClauses.top();
             unitClauses.pop();
 
-            if(empty(clauses[i]))
+            if(isFalse(clauses[i][0]))
             {
                 // Clear Unit clauses stack and return false
                 // meaning a conflict has occurred
@@ -17,7 +17,7 @@ namespace asatar
                 return false;
             }
 
-            setVariable(clauses[i][0]);
+            if(isUndef(clauses[i][0])) { setVariable(clauses[i][0]); }
         }
 
         return true;
@@ -25,6 +25,7 @@ namespace asatar
 
     void Solver::setVariable(Lit p)
     {
+        assert(isUndef(p));
         changeStack.push(var(p));
         assign[var(p)] = sign(~p);
         auto it = watchList[toInt(~p)].begin();
@@ -84,7 +85,7 @@ namespace asatar
 
     Var Solver::selectNextVar()
     {
-        while(assign[nextVar] == -1) { nextVar++; }
+        while(assign[nextVar] != -1) { nextVar++; }
 
         return nextVar;
     }
@@ -107,15 +108,40 @@ namespace asatar
         }
         changeStack.pop();
 
-        setVariable(mkLit(x, assign[x]));
+        Lit p = mkLit(x, assign[x]);
+        assign[x] = -1;
+
+        setVariable(p);
 
         nextVar = x + 1;
 
         return false;
     }
 
+    void Solver::init()
+    {
+        for(uint i = 0; i < M; i++)
+        {
+            if(clauses[i].size() == 1) 
+            { 
+                watchList[toInt(clauses[i][0])].push_back(i);
+                unitClauses.push(i); 
+            }
+            else
+            {
+                watchList[toInt(clauses[i][0])].push_back(i);
+                watchList[toInt(clauses[i][1])].push_back(i);
+            }
+        }
+    }
+
     bool Solver::solve()
     {
+        init();
+
+        if(!unitPropagation()) { ok = 0; return UNSAT; }
+        if(isSAT()) { ok = 1; return SAT; }
+
         while(true)
         {
             Var x = selectNextVar();
@@ -141,7 +167,7 @@ namespace asatar
         }
     }
 
-    void Solver::readFromFile(std::ifstream& file)
+    void Solver::readFromFile(std::istream& file)
     {
         std::string line = "";
         std::stringstream ss;
@@ -184,11 +210,11 @@ namespace asatar
         file.close();
     }
 
-    void Solver::printToFile(std::ofstream& file)
+    void Solver::printToFile(std::ostream& file)
     {
         file << "c Solution created by aSATar: The Last SAT Solver" << std::endl;
         file << "c " << std::endl;
-        file << "s cnf " << ok << N << std::endl;
+        file << "s cnf " << ok << " " << N << std::endl;
 
         if(ok != 1) { return; }
 
