@@ -206,44 +206,45 @@ void handle_result(SAT_Manager mng, int outcome, char * filename )
 
 void handle_result1(SAT_Manager mng, int outcome, char * filename )
 {
+    ofstream outputFile("solution.txt");
     char * result = "UNKNOWN";
     switch (outcome) {
     case SATISFIABLE:
-        cout << "s cnf 1 " << SAT_NumVariables(mng) << endl;
+        outputFile << "s cnf 1 " << SAT_NumVariables(mng) << endl;
 //following lines will print out a solution if a solution exist
         for (int i=1, sz = SAT_NumVariables(mng); i<= sz; ++i) {
-        	cout << "v ";
+        	outputFile << "v ";
             switch(SAT_GetVarAsgnment(mng, i)) {
             case -1:        
-                cout <<"("<< i<<")"; break;
+                outputFile <<"("<< i<<")"; break;
             case 0:
-                cout << "-" << i; break;
+                outputFile << "-" << i; break;
             case 1:
-                cout << i; break;
+                outputFile << i; break;
             default:
                 cerr << "Unknown variable value state"<< endl;
                 exit(4);
             }
-            cout << "\n";
+            outputFile << "\n";
         }
         result  = "SAT";
         break;
     case UNSATISFIABLE:
         result  = "UNSAT";
-        cout << "s cnf 0 " << SAT_NumVariables(mng) << endl;
+        outputFile << "s cnf 0 " << SAT_NumVariables(mng) << endl;
         break; 
     case TIME_OUT:
         result  = "ABORT : TIME OUT"; 
-        cout << "s cnf -1 " << SAT_NumVariables(mng) << endl;
+        outputFile << "s cnf -1 " << SAT_NumVariables(mng) << endl;
         break;
     case MEM_OUT:
         result  = "ABORT : MEM OUT"; 
-       cout << "s cnf -1 " << SAT_NumVariables(mng) << endl;
+       outputFile << "s cnf -1 " << SAT_NumVariables(mng) << endl;
         break;
     default:
         cerr << "Unknown outcome" << endl;
     }
-    cout << "c rt " << SAT_GetCPUTime(mng) << endl;
+    outputFile << "c rt " << SAT_GetCPUTime(mng) << endl;
 
 }
 
