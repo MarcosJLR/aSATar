@@ -46,26 +46,26 @@ namespace asatar
     {
         if(clauses[i].size() < 2) { return false; } 
 
-        if(clauses[i][0] == p) { swap(clauses[i][0], clauses[i][1]); }
+        if(clauses[i][0] == p) { std::swap(clauses[i][0], clauses[i][1]); }
 
         if(isTrue(clauses[i][0])) { return false; }
 
-        for(uint j = 2; j < clause.size(); j++)
+        for(uint j = 2; j < clauses[i].size(); j++)
         {
             if(isTrue(clauses[i][j]))
             {
                 watchList[toInt(clauses[i][j])].push_back(i);
-                swap(clauses[i][1], clauses[i][j]);
-                swap(clauses[i][0], clauses[i][1]);
+                std::swap(clauses[i][1], clauses[i][j]);
+                std::swap(clauses[i][0], clauses[i][1]);
                 return true;
             }
             if(isUndef(clauses[i][j]))
             {
                 watchList[toInt(clauses[i][j])].push_back(i);
-                swap(clauses[i][1], clauses[i][j]);
+                std::swap(clauses[i][1], clauses[i][j]);
                 if(isFalse(clauses[i][0]))
                 {
-                    swap(clauses[i][0], clauses[i][1]);
+                    std::swap(clauses[i][0], clauses[i][1]);
                 }                
                 return true;
             }
@@ -89,7 +89,7 @@ namespace asatar
         return nextVar;
     }
 
-    bool Solver::backtrack()
+    bool Solver::backTrack()
     {
         if(decisionStack.empty())
         {
@@ -125,7 +125,7 @@ namespace asatar
                 bool posible = unitPropagation();
                 if(!posible)
                 {
-                    bool atLevel0 = backtrack();
+                    bool atLevel0 = backTrack();
                     if(atLevel0) { ok = 0; return UNSAT; }
                 }
                 else if(isSAT())
@@ -144,7 +144,7 @@ namespace asatar
     void Solver::readFromFile(std::ifstream& file)
     {
         std::string line = "";
-        std::sstream ss;
+        std::stringstream ss;
 
         while(getline(file, line))
         {
@@ -161,7 +161,8 @@ namespace asatar
 
         ss >> N >> M;
 
-        int m = 0, l = 0;
+        uint m = 0;
+        int l = 0;
         while(file >> l)
         {
             if(l != 0)
@@ -176,16 +177,16 @@ namespace asatar
         assert(M == m+1);
     }
 
-    void readFromFile(const std::string filename)
+    void Solver::readFromFile(const std::string filename)
     {
         std::ifstream file(filename);
         readFromFile(file);
         file.close();
     }
 
-    void printToFile(std::ofstream& file)
+    void Solver::printToFile(std::ofstream& file)
     {
-        file << "c Solucion creada por aSATar: The Last SAT Solver" << std::endl;
+        file << "c Solution created by aSATar: The Last SAT Solver" << std::endl;
         file << "c " << std::endl;
         file << "s cnf " << ok << N << std::endl;
 
@@ -199,9 +200,9 @@ namespace asatar
         }
     }
 
-    void printToFile(const std::string filename)
+    void Solver::printToFile(const std::string filename)
     {
-        ofstream file(filename);
+        std::ofstream file(filename);
         printToFile(file);
         file.close();
     }

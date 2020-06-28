@@ -28,7 +28,7 @@ namespace asatar
     inline bool sign(Lit p)         { return p.x & 1; }
     inline int toInt(Lit p)         { return p.x; }
 
-    inline Lit mklit(Var var, bool sign = false) { Lit q(var, sign); reutrn q; }
+    inline Lit mkLit(Var var, bool sign = false) { Lit q(var, sign); return q; }
     
     typedef std::vector<Lit> Clause;
 };

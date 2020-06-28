@@ -1,11 +1,14 @@
 #pragma once
 
-#include <assert.h>
+#include <cstring>
+#include <cassert>
 #include <fstream>
+#include <sstream>
 #include <vector>
+#include <stack>
 #include <list>
 
-#include "src/solver/SolverTypes.hpp"
+#include "SolverTypes.hpp"
 
 #define MAX_VAR     1024    
 #define MAX_LIT     2048
@@ -21,7 +24,7 @@ namespace asatar
         Solver()
         {
             N = M = 0;            
-            memset(assign, -1, sizeof(assgin));
+            memset(assign, -1, sizeof(assign));
             nextVar = 0;
         }
 
@@ -55,7 +58,7 @@ namespace asatar
         uint N;                                 // Number of variables
         uint M;                                 // Number of clauses    
         int assign[MAX_VAR];                    // Current assignment (-1 means this variable is unassigned)
-        std::list<int> watchLists[MAX_LIT];     // Watch list for literal watchers
+        std::list<int> watchList[MAX_LIT];      // Watch list for literal watchers
         Clause clauses[MAX_CLAUSE];             // Clauses (watched literals are always the first two)
         std::stack<int> unitClauses;            // Unit clauses to propagate
 
