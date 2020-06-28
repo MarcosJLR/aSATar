@@ -84,7 +84,7 @@ tuple <int,string> filledPlaces (int length, int size, char* cells) {
 	return {nClauses,sat};
 }
 
-void sudokuToSAT (string sudoku) {
+void sudokuToSAT (string outputFileName,string sudoku) {
 	int order;
 	sscanf(sudoku.c_str(),"%i",&order);
 	int length = order*order; //N^2
@@ -100,7 +100,7 @@ void sudokuToSAT (string sudoku) {
 	sat.append(to_string(nClauses)).append("\n");
 	sat.append(filledVarsSat);
 	sat.append(baseSudSat);
-	ofstream file ("sat.txt");
+	ofstream file (outputFileName);
 	if(file.is_open()){
 		file << sat;
 		file.close();
@@ -109,8 +109,11 @@ void sudokuToSAT (string sudoku) {
 }
 
 int main (int argc, char *argv[]) {
-	string sudoku = argv[1];
-	sudoku.append(argv[2]);
-	sudokuToSAT(sudoku);
+	if(argc <3) return 0;
+	string outputFileName = argv[1];
+	string sudoku = argv[2];
+	if(sudoku[0]<'1'||sudoku[0]>'6') return 0;
+	if(argc>3) sudoku.append(" ").append(argv[3]);
+	sudokuToSAT(outputFileName,sudoku);
 	return 0;
 }
