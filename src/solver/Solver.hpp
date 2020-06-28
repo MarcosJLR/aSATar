@@ -1,6 +1,7 @@
 #pragma once
 
 #include <assert.h>
+#include <fstream>
 #include <vector>
 #include <list>
 
@@ -21,6 +22,7 @@ namespace asatar
         {
             N = M = 0;            
             memset(assign, -1, sizeof(assgin));
+            nextVar = 0;
         }
 
         inline bool isSAT()                 { return changeStack.size() == N; }                 // Is the formula currently satisfied
@@ -36,9 +38,18 @@ namespace asatar
         void setVariable(Lit p);                // Assign value to variable to make p true and handle watchlists
         bool updateWatcher(int i, Lit p);       // Update watcher of clause after value of p changes
         void makeDecision(Var x);               // Make a decision for variable x                
+        Var selectNextVar();                    // Select next decision varible
         bool backTrack();                       // Undo all assignments made in the last decision level
 
-        bool solve()                            // Solve this instance of SAT
+        void init();                            // Initialize unit clause stack and watchlists
+        bool solve();                           // Solve this instance of SAT
+
+        // IO functions
+        void readFromFile(std::ifstream& file);         // Read from file given filestream
+        void readFromFile(const std::string filename);  // Read from file given filename
+
+        void printToFile(std::ofstream& file);          // Print to file given filestream
+        void printToFile(const std::string filename);   // Print to file given filename
 
     private:
         uint N;                                 // Number of variables
@@ -50,6 +61,9 @@ namespace asatar
 
         std::stack<Var> changeStack;            // Stack containing all variable assignments
         std::stack<Var> decisionStack;          // Stack containing all decision variables in order
+
+        Var nextVar;                            // First not yet set variable
+        int ok;                                 // 1 if SAT, 0 if UNSAT, -1 if haven't decided yet
 
         static const bool UNSAT = false;
         static const bool SAT   = true;

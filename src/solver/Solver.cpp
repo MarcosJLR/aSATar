@@ -82,6 +82,13 @@ namespace asatar
         setVariable(mkLit(x));
     }
 
+    Var Solver::selectNextVar()
+    {
+        while(assign[nextVar] == -1) { nextVar++; }
+
+        return nextVar;
+    }
+
     bool Solver::backtrack()
     {
         if(decisionStack.empty())
@@ -102,6 +109,8 @@ namespace asatar
 
         setVariable(mkLit(x, assign[x]));
 
+        nextVar = x + 1;
+
         return false;
     }
 
@@ -109,17 +118,19 @@ namespace asatar
     {
         while(true)
         {
-            // Decide what variable to set
+            Var x = selectNextVar();
+            makeDecision(x);
             while(true)
             {
                 bool posible = unitPropagation();
                 if(!posible)
                 {
                     bool atLevel0 = backtrack();
-                    if(atLevel0) { return UNSAT; }
+                    if(atLevel0) { ok = 0; return UNSAT; }
                 }
                 else if(isSAT())
                 {
+                    ok = 1;
                     return SAT; 
                 }
                 else 
@@ -128,5 +139,70 @@ namespace asatar
                 }
             }
         }
+    }
+
+    void Solver::readFromFile(std::ifstream& file)
+    {
+        std::string line = "";
+        std::sstream ss;
+
+        while(getline(file, line))
+        {
+            if(line[0] == 'p') { break; }
+        }
+
+        ss << line;
+
+        ss >> line;        
+        assert(line == "p");
+
+        ss >> line;        
+        assert(line == "cnf");
+
+        ss >> N >> M;
+
+        int m = 0, l = 0;
+        while(file >> l)
+        {
+            if(l != 0)
+            {
+                Var x = abs(l) - 1;
+                Lit p = mkLit(x, l < 0);
+                clauses[m].push_back(p);
+            }
+            else { m++; }
+        }
+
+        assert(M == m+1);
+    }
+
+    void readFromFile(const std::string filename)
+    {
+        std::ifstream file(filename);
+        readFromFile(file);
+        file.close();
+    }
+
+    void printToFile(std::ofstream& file)
+    {
+        file << "c Solucion creada por aSATar: The Last SAT Solver" << std::endl;
+        file << "c " << std::endl;
+        file << "s cnf " << ok << N << std::endl;
+
+        if(ok != 1) { return; }
+
+        for(uint i = 0; i < N; i++)
+        {
+            int x = i + 1;
+            if(assign[i] == 0) { x = -x; }
+            file << "v " << x << std::endl;
+        }
+    }
+
+    void printToFile(const std::string filename)
+    {
+        ofstream file(filename);
+        printToFile(file);
+        file.close();
     }
 };
