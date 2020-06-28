@@ -4,6 +4,7 @@
 #include <cassert>
 #include <fstream>
 #include <sstream>
+#include <chrono>
 #include <vector>
 #include <stack>
 #include <list>
@@ -21,11 +22,13 @@ namespace asatar
     public:
         // Constructor
         // Init sizes to 0 and all assignments to -1 (unassigned)
-        Solver()
+        Solver() 
         {
             N = M = 0;            
             memset(assign, -1, sizeof(assign));
+            hasTimeout = false;
             nextVar = 0;
+            ok = -1;
         }
 
         inline bool isSAT()                 { return changeStack.size() == N; }                 // Is the formula currently satisfied
@@ -54,6 +57,10 @@ namespace asatar
         void printToFile(std::ostream& file);          // Print to file given filestream
         void printToFile(const std::string filename);   // Print to file given filename
 
+        // Time functions
+        bool timeout();                         // Tells if time is out 
+        void setTimeout(int newTimeout);        // Sets timeout to be newTimeout
+
     private:
         uint N;                                 // Number of variables
         uint M;                                 // Number of clauses    
@@ -68,6 +75,14 @@ namespace asatar
         Var nextVar;                            // First not yet set variable
         int ok;                                 // 1 if SAT, 0 if UNSAT, -1 if haven't decided yet
 
+        // Time management
+        std::chrono::time_point<std::chrono::steady_clock> startTime;
+        std::chrono::time_point<std::chrono::steady_clock> finishTime;
+
+        std::chrono::milliseconds timeoutDuration;
+        bool hasTimeout;
+
+        static const bool UNSOLVED = false;
         static const bool UNSAT = false;
         static const bool SAT   = true;
     };

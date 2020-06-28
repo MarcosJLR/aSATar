@@ -137,10 +137,22 @@ namespace asatar
 
     bool Solver::solve()
     {
+        startTime = std::chrono::steady_clock::now();
+
         init();
 
-        if(!unitPropagation()) { ok = 0; return UNSAT; }
-        if(isSAT()) { ok = 1; return SAT; }
+        if(!unitPropagation()) 
+        {
+            finishTime = std::chrono::steady_clock::now();
+            ok = 0; 
+            return UNSAT; 
+        }
+        if(isSAT()) 
+        {
+            finishTime = std::chrono::steady_clock::now();
+            ok = 1; 
+            return SAT; 
+        }
 
         while(true)
         {
@@ -152,16 +164,27 @@ namespace asatar
                 if(!posible)
                 {
                     bool atLevel0 = backTrack();
-                    if(atLevel0) { ok = 0; return UNSAT; }
+                    if(atLevel0) 
+                    { 
+                        finishTime = std::chrono::steady_clock::now();
+                        ok = 0; 
+                        return UNSAT; 
+                    }
                 }
                 else if(isSAT())
                 {
+                    finishTime = std::chrono::steady_clock::now();
                     ok = 1;
                     return SAT; 
                 }
                 else 
                 { 
                     break; 
+                }
+                if(timeout())
+                {
+                    finishTime = std::chrono::steady_clock::now();
+                    return UNSOLVED;                    
                 }
             }
         }
@@ -212,7 +235,10 @@ namespace asatar
 
     void Solver::printToFile(std::ostream& file)
     {
+        auto totalRuntime = std::chrono::duration_cast<std::chrono::milliseconds>( finishTime - startTime ).count();
+
         file << "c Solution created by aSATar: The Last SAT Solver" << std::endl;
+        file << "c rt " << (double)totalRuntime / 1000.0 << std::endl;
         file << "c " << std::endl;
         file << "s cnf " << ok << " " << N << std::endl;
 
@@ -231,5 +257,18 @@ namespace asatar
         std::ofstream file(filename);
         printToFile(file);
         file.close();
+    }
+
+    bool Solver::timeout()
+    {
+        if(!hasTimeout) { return false; }
+        auto currentTime = std::chrono::steady_clock::now();
+        return std::chrono::duration_cast<std::chrono::milliseconds>( currentTime - startTime ) > timeoutDuration;
+    }
+
+    void Solver::setTimeout(int newTimeout)
+    {
+        hasTimeout = true;
+        timeoutDuration = std::chrono::milliseconds(newTimeout);
     }
 };
