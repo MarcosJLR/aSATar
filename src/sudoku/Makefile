@@ -1,7 +1,12 @@
-all: sud_sat sat_sud
+.PHONY: all
+
+CC = g++
+CFLAGS = -std=c++17 -O2 -Wall
+
+all: sud_sat sat_sud 
 
 sud_sat: sud-sat.cpp
-	g++ sud-sat.cpp -o sudsat
+	$(CC) $(CFLAGS) -o $@ $< 
 
 sat_sud: sat-sud.cpp
-	g++ sat-sud.cpp -o satsud
+	$(CC) $(CFLAGS) -o $@ $< 
