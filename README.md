@@ -21,6 +21,10 @@ Para realizar el algoritmo ***DPLL*** iterativo se siguió el esqueleto en el ar
 Por último, el solver contiene un *timer* para terminar la ejecución si se está tardando demasiado en llegar a un veredicto.
 
 ## Uso
+Para el uso de nuestro programa será necesario tener C++ y Python3, así como la librería de python matplotlib, usada para la obtención de graficas. Para instalar esta librería se usa el comando:
+	python -m pip install -U matplotlib
+Luego de esto, para correr cada programa se usaran dos archivos bash que se encuentran en el directorio principal. `bash run_zchaff.sh` correrá el programa zchaff para la resolución del problema SAT, mientras que
+`bash run_aSatar.sh` correrá la implementación propia de un resolvedor de problemas SAT. Ambos scripts pedirán la dirección del archivo con los problemas a resolver. Los resultados de ambas corridas quedarán en la carpeta `files`, en los archivos `zchaff.txt` y `aSatar.txt`, respectivamente. En la misma carpeta se encontrarán las imagenes `zchaff_plot.png` y `aSatar_plot.png`, que graficarán el tiempo tomado por el programa respectivo para cada distinto problema. Finalmente, dentor de la carpeta `files` se podrán encontrar otras dos carpetas `zchaff_sudokus` y `aSatar_sudokus` que tendrán dentro imagenes con cada uno de los sudokus resueltos por el programa respectivo.
 
 ### Agradecimientos
 Gracias a Vicmary por darnos este nombre tan malandro para el proyecto.
