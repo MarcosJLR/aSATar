@@ -38,6 +38,7 @@
 #include <fstream>
 #include <cstdlib>
 #include <cstdio>
+#include <math.h>
 
 #include <set>
 #include <vector>
@@ -244,7 +245,7 @@ void handle_result1(SAT_Manager mng, int outcome, char * filename )
     default:
         cerr << "Unknown outcome" << endl;
     }
-    outputFile << "c rt " << SAT_GetCPUTime(mng) << endl;
+    outputFile << "c rt " << 1000*SAT_GetCPUTime(mng) << endl;
 
 }
 

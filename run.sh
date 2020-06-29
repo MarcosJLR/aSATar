@@ -1,8 +1,7 @@
 cd ./files
-rm Instances.txt
-rm sat.txt
-rm sud.txt
-rm solution.txt
+rm *.png
+rm *.txt
+echo "Ingrese el nombre del archivo con los sudokus a resolver:"
 read fileaddress
 cd ..
 cp $fileaddress ./files/Instances.txt
@@ -19,7 +18,11 @@ while read line; do
 	rm ./solution.txt
 	cd ..
 	cd ./sudoku
-	./satsud "$filesdir/solution.txt" "$filesdir/sud.txt"
+	./satsud "$filesdir/solution.txt" "$filesdir/zchaff.txt"
 	cd ..
 	cd ..
 done < $fileaddress
+cd ./src/
+python3 plots.py "$filesdir/zchaff.txt"
+make clean -C ./zchaff64/
+cd ..
