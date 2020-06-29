@@ -18,9 +18,9 @@ int main(int argc, char* argv[])
 
 	if(timeout > 0) { solver.setTimeout(timeout); }
 
-	solver.readFromFile(cin);
+	solver.readFromFile(argv[1]);
 	solver.solve();
-	solver.printToFile(cout);
+	solver.printToFile("solution.txt");
 
 	return 0;
 }
