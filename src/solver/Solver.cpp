@@ -238,7 +238,7 @@ namespace asatar
         auto totalRuntime = std::chrono::duration_cast<std::chrono::milliseconds>( finishTime - startTime ).count();
 
         file << "c Solution created by aSATar: The Last SAT Solver" << std::endl;
-        file << "c rt " << (double)totalRuntime / 1000.0 << std::endl;
+        file << "c rt " << totalRuntime << std::endl;
         file << "c " << std::endl;
         file << "s cnf " << ok << " " << N << std::endl;
 
