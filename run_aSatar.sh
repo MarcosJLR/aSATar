@@ -1,3 +1,7 @@
+if [[ "$#" -eq 0 ]]; then
+	echo "Error: No se recibieron argumentos."
+	exit 1
+fi
 rm ./files/aSatar.txt
 rm ./files/aSatar_sudokus/*.png
 cp "$1" ./files/Instances.txt
@@ -10,7 +14,12 @@ while read line; do
 		./sud_sat "$filesdir/sat.txt" "$line"
 		cd ..
 		cd ./solver
-		./solver "$filesdir/sat.txt"
+		if [[ "$#" -ne 1 ]]
+		then
+			./solver "$filesdir/sat.txt" $2
+		else
+			./solver "$filesdir/sat.txt"
+		fi
 		cp ./solution.txt $filesdir
 		rm ./solution.txt
 		cd ..
