@@ -2,6 +2,16 @@
 
 namespace asatar
 {
+    double get_cpu_time(void) {
+        double res;
+        struct rusage usage;
+        getrusage(RUSAGE_SELF, &usage);
+        res = usage.ru_utime.tv_usec + usage.ru_stime.tv_usec;
+        res *= 1e-6;
+        res += usage.ru_utime.tv_sec + usage.ru_stime.tv_sec;
+        return res;
+    }
+    
     bool Solver::unitPropagation()
     {
         while(!unitClauses.empty())
@@ -137,19 +147,19 @@ namespace asatar
 
     bool Solver::solve()
     {
-        startTime = std::chrono::steady_clock::now();
+        startTime = get_cpu_time();
 
         init();
 
         if(!unitPropagation()) 
         {
-            finishTime = std::chrono::steady_clock::now();
+            finishTime = get_cpu_time();
             ok = 0; 
             return UNSAT; 
         }
         if(isSAT()) 
         {
-            finishTime = std::chrono::steady_clock::now();
+            finishTime = get_cpu_time();
             ok = 1; 
             return SAT; 
         }
@@ -166,14 +176,14 @@ namespace asatar
                     bool atLevel0 = backTrack();
                     if(atLevel0) 
                     { 
-                        finishTime = std::chrono::steady_clock::now();
+                        finishTime = get_cpu_time();
                         ok = 0; 
                         return UNSAT; 
                     }
                 }
                 else if(isSAT())
                 {
-                    finishTime = std::chrono::steady_clock::now();
+                    finishTime = get_cpu_time();
                     ok = 1;
                     return SAT; 
                 }
@@ -183,7 +193,7 @@ namespace asatar
                 }
                 if(timeout())
                 {
-                    finishTime = std::chrono::steady_clock::now();
+                    finishTime = get_cpu_time();
                     return UNSOLVED;                    
                 }
             }
@@ -235,7 +245,7 @@ namespace asatar
 
     void Solver::printToFile(std::ostream& file)
     {
-        auto totalRuntime = std::chrono::duration_cast<std::chrono::milliseconds>( finishTime - startTime ).count();
+        double totalRuntime = 1000*(finishTime - startTime);
 
         file << "c Solution created by aSATar: The Last SAT Solver" << std::endl;
         file << "c rt " << totalRuntime << std::endl;
@@ -262,13 +272,13 @@ namespace asatar
     bool Solver::timeout()
     {
         if(!hasTimeout) { return false; }
-        auto currentTime = std::chrono::steady_clock::now();
-        return std::chrono::duration_cast<std::chrono::milliseconds>( currentTime - startTime ) > timeoutDuration;
+        double currentTime = get_cpu_time();
+        return currentTime - startTime> timeoutDuration;
     }
 
     void Solver::setTimeout(int newTimeout)
     {
         hasTimeout = true;
-        timeoutDuration = std::chrono::milliseconds(newTimeout);
+        timeoutDuration = newTimeout;
     }
 };

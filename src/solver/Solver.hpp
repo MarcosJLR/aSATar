@@ -8,6 +8,8 @@
 #include <vector>
 #include <stack>
 #include <list>
+#include <sys/time.h>
+#include <sys/resource.h>
 
 #include "SolverTypes.hpp"
 
@@ -76,10 +78,10 @@ namespace asatar
         int ok;                                 // 1 if SAT, 0 if UNSAT, -1 if haven't decided yet
 
         // Time management
-        std::chrono::time_point<std::chrono::steady_clock> startTime;
-        std::chrono::time_point<std::chrono::steady_clock> finishTime;
+        double startTime;
+        double finishTime;
 
-        std::chrono::milliseconds timeoutDuration;
+        int timeoutDuration;
         bool hasTimeout;
 
         static const bool UNSOLVED = false;
